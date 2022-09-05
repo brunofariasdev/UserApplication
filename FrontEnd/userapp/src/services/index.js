@@ -11,6 +11,14 @@ class EmployeeService {
     GetAllUsers() {
         return axios.get(BASE_URL);
     }
+
+    DeleteUser(id) {
+        return axios.delete(BASE_URL + "/" + id);
+    }
+
+    CreateUser(user) {
+        return axios.post(BASE_URL, user);
+    }
 }
 
 export default new EmployeeService();
