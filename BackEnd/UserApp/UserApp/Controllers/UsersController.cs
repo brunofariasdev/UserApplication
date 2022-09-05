@@ -51,16 +51,24 @@ namespace UserApp.Controllers
         }
 
         [HttpPost("authenticate")]
-        public async Task<ActionResult<User>> Authenticate(VerifyModel model)
+        public async Task<ActionResult<UserAuth>> Authenticate(VerifyModel model)
         {
             var user = await _context.User.SingleOrDefaultAsync(x => x.Email == model.Email);
 
             if (user == null || model.Password != user.Password)
             {
-                return NotFound();
+                UserAuth data = new UserAuth();
+                data.IsAuth = false;
+                data.User = new User();
+                return data;
             }
-
-            return user;
+            else
+            {
+                UserAuth data = new UserAuth();
+                data.IsAuth = true;
+                data.User = user;
+                return data;
+            }
 
         }
 
