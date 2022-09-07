@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Home from '../views/Home.vue'
-import { useStore } from 'vuex';
+
 
 const routes = [
   {
@@ -21,13 +21,25 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/login'];
+  const publicPages = ['/'];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem('logged');
+
+  if (to.path == '/' && loggedIn) {
+    return next('/home')
+  } else if (to.path == '/' && !loggedIn) {
+    return next('/login')
+  }
 
   if (authRequired && !loggedIn) {
     return next('/login');
   }
+
+  if (loggedIn && to.path == '/login') {
+    return next('/home')
+  }
+
+
 
   next();
 })

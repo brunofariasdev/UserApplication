@@ -20,8 +20,7 @@ export default createStore({
     },
     CREATE_USER(state, payload) {
       state.userItems.push(payload)
-    },
-
+    }
   },
   actions: {
     GetUsers() {
@@ -39,6 +38,12 @@ export default createStore({
     DeleteUser({ commit }, id) {
       EmployeeService.DeleteUser(id).then(() => {
         commit("DELETE_USER", id);
+      });
+    },
+
+    UpdateUser({ commit }, id) {
+      EmployeeService.UpdateUser(id).then(() => {
+        console.log('atualizado');
       });
     }
   },

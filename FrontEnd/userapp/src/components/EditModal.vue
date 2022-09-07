@@ -7,9 +7,9 @@
                 <!-- Modal header -->
                 <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Edite um Usuario
+                        Edite um Usuário
                     </h3>
-                    <button type="button"
+                    <button type="button" @click="$emit('close')"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="defaultModal">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -22,9 +22,9 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="p-6 space-y-6">
+                <div class="p-6 space-y-6 custom-overflow">
                     <div class="mb-2">
-                        <label class="block text-white text-sm font-bold mb-2" for="username">
+                        <label class="block text-white text-sm font-bold mb-2" for="getusername">
                             Nome
                         </label>
                         <input
@@ -37,7 +37,7 @@
                         </label>
                         <input
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            type="password" placeholder="******************" v-model="user.password">
+                            type="text" placeholder="******************" v-model="user.password">
                         <!-- <p class="text-red-500 text-xs italic">Please choose a password.</p> -->
                     </div>
                     <div class="mb-2">
@@ -49,7 +49,7 @@
                             type="email" placeholder="Email" v-model="user.email">
                     </div>
                     <div class="mb-2">
-                        <label class="block text-white text-sm font-bold mb-2" for="username">
+                        <label class="block text-white text-sm font-bold mb-2" for="getusername">
                             Telefone
                         </label>
                         <input
@@ -65,7 +65,7 @@
                             type="text" placeholder="CPF" v-model="user.cpf">
                     </div>
                     <div class="mb-2">
-                        <label class="block text-white text-sm font-bold mb-2" for="username">
+                        <label class="block text-white text-sm font-bold mb-2" for="getusername">
                             Cidade
                         </label>
                         <input
@@ -73,7 +73,7 @@
                             type="text" placeholder="Cidade" v-model="user.city">
                     </div>
                     <div class="mb-2">
-                        <label class="block text-white text-sm font-bold mb-2" for="username">
+                        <label class="block text-white text-sm font-bold mb-2" for="getusername">
                             Estado
                         </label>
                         <input
@@ -81,7 +81,7 @@
                             type="text" placeholder="Estado" v-model="user.state">
                     </div>
                     <div>
-                        <label class="block text-white text-sm font-bold mb-2" for="username">
+                        <label class="block text-white text-sm font-bold mb-2" for="getusername">
                             CEP
                         </label>
                         <input
@@ -91,7 +91,7 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                    <button data-modal-toggle="defaultModal" type="button" @click="CreateUser"
+                    <button data-modal-toggle="defaultModal" type="button" @click="salvar" :disabled="ConfirmedButton"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Adicionar</button>
                     <button data-modal-toggle="defaultModal" type="button" @click="$emit('close')"
@@ -103,25 +103,19 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
+import store from '@/store'
 
 export default {
-  setup() {
-    props:{
-        getUser: Object
+    props: [
+        'user',
+    ],
+    setup(props, { emit }) {
+        const salvar = () => {
+            store.dispatch('UpdateUser', props.user)
+            emit('close')
+        }
+        return { salvar }
     }
-    const user = ref();
-
-
-    const Start = () => {
-        user.value = getUser
-    }
-    Start();
-    
-    return { CreateUser, user }
-  }
-
 
 }
 </script>

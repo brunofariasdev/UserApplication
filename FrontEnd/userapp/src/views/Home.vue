@@ -1,6 +1,7 @@
 <template>
-    <CreatedModal v-if="modalCreate" @close="swithModal" />
-    <EditModal v-if="modalEdit" :user="userSelect" />
+    <CreatedModal v-if="modalCreate" @close="swithCreate" />
+    <EditModal v-if="modalEdit" :user="userSelect" @close="swithEdit" />
+    <ModalConfirmed v-if="confirmeDelete" @close="swithConfirmed" @confirmed="deleteUser" />
     <div class="overflow-x-auto">
         <div
             class="min-w-screen min-h-screen bg-gray-100 flex items-center justify-center bg-gray-100 font-sans overflow-hidden">
@@ -15,7 +16,7 @@
                                 <th class="py-3 px-6 text-center">
                                     <button
                                         class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                        type="button" data-modal-toggle="defaultModal" @click="swithModal">
+                                        type="button" data-modal-toggle="defaultModal" @click="swithCreate">
                                         Adicionar Usuario
                                     </button>
                                 </th>
@@ -28,26 +29,17 @@
                                 v-for="(item, index) in store.state.userItems">
                                 <td class="py-3 px-6 text-left">
                                     <div class="flex items-center">
-                                        <span>{{item.name}}</span>
+                                        <span>{{ item.name }}</span>
                                     </div>
                                 </td>
                                 <td class="py-3 px-6 text-center">
                                     <div class="flex items-center">
-                                        <span>{{item.email}}</span>
+                                        <span>{{ item.email }}</span>
                                     </div>
                                 </td>
                                 <td class="py-3 px-6 text-center">
                                     <div class="flex item-center justify-center">
-                                        <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        </div>
-                                        <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
+                                        <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110 cursor-pointer"
                                             @click="EditUser(item.id)">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor">
@@ -55,8 +47,8 @@
                                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </div>
-                                        <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
-                                            @click="DeleteUser(item.id)">
+                                        <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110 cursor-pointer"
+                                            @click="setUserDelete(item.id)">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -79,6 +71,7 @@ import { ref } from 'vue'
 import { useStore } from 'vuex'
 import CreatedModal from '@/components/CreatedModal.vue'
 import EditModal from '@/components/EditModal.vue'
+import ModalConfirmed from '@/components/ModalConfirmed.vue'
 
 name: 'Home'
 export default {
@@ -86,14 +79,25 @@ export default {
         const store = useStore();
         const modalCreate = ref(false);
         const modalEdit = ref(false);
+        const confirmeDelete = ref(false);
         const userSelect = ref();
+        const deleteUserId = ref();
+
         const start = () => {
             store.dispatch("GetUsers");
         };
         start();
-        const DeleteUser = (id) => {
-            store.dispatch('DeleteUser', id);
+
+        const setUserDelete = (id) => {
+            deleteUserId.value = id;
+            swithConfirmed();
         };
+
+        const deleteUser = () => {
+            store.dispatch('DeleteUser', deleteUserId.value)
+            console.log(deleteUserId)
+            swithConfirmed();
+        }
 
         const SelectUser = (id) => {
             userSelect.value = store.getters.GetUser(id)
@@ -101,14 +105,23 @@ export default {
 
         const EditUser = (id) => {
             SelectUser(id);
-            modalEdit.value = true;
+            swithEdit()
         }
 
-        const swithModal = () => {
+        const swithEdit = () => {
+            modalEdit.value = !modalEdit.value;
+        }
+
+        const swithCreate = () => {
             modalCreate.value = !modalCreate.value;
         }
-        return { DeleteUser, store, modalCreate, swithModal, EditUser, modalEdit};
+
+        const swithConfirmed = () => {
+            confirmeDelete.value = !confirmeDelete.value;
+        }
+
+        return { store, swithCreate, swithConfirmed, EditUser, modalEdit, confirmeDelete, setUserDelete, deleteUser, modalCreate, userSelect, swithEdit };
     },
-    components: { CreatedModal, EditModal }
+    components: { CreatedModal, EditModal, ModalConfirmed, ModalConfirmed }
 }
 </script>
