@@ -54,15 +54,15 @@
                         </label>
                         <input
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            type="text" placeholder="Telefone" v-model="user.phone">
+                            type="text" placeholder="Telefone" v-model="user.phone" v-mask="'(##) #####-####'">
                     </div>
                     <div class="mb-2">
-                        <label class="block text-white text-sm font-bold mb-2" for="username">
+                        <label class="block text-white text-sm font-bold mb-2" mask="###.###.###-##" for="username">
                             CPF
                         </label>
                         <input
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            type="text" placeholder="CPF" v-model="user.cpf">
+                            type="text" placeholder="CPF" v-model="user.cpf" v-mask="'###.###.###-##'">
                     </div>
                     <div class="mb-2">
                         <label class="block text-white text-sm font-bold mb-2" for="username">
@@ -86,7 +86,7 @@
                         </label>
                         <input
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            type="text" placeholder="CEP" v-model="user.cep">
+                            type="text" placeholder="CEP" v-mask="'#####-###'" v-model="user.cep">
                     </div>
                 </div>
                 <!-- Modal footer -->
