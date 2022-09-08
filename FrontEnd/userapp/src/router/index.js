@@ -5,6 +5,10 @@ import Home from '../views/Home.vue'
 
 const routes = [
   {
+    path: '/',
+    redirect: '/login'
+  },
+  {
     path: '/login',
     component: Login,
   },
@@ -21,15 +25,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/'];
+  const publicPages = ['/login'];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem('logged');
 
-  if (to.path == '/' && loggedIn) {
-    return next('/home')
-  } else if (to.path == '/' && !loggedIn) {
-    return next('/login')
-  }
 
   if (authRequired && !loggedIn) {
     return next('/login');
