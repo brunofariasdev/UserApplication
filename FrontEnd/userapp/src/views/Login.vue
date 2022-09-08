@@ -68,8 +68,9 @@ export default {
     const doLogin = () => {
       EmployeeService.Login(model.value).then((res) => {
         if (res.data.isAuth) {
-          store.dispatch('GetUsers');
-          localStorage.setItem('logged', JSON.stringify(true));
+          store.dispatch('GetUsers')
+          localStorage.setItem('logged', JSON.stringify(true))
+          localStorage.setItem('user', JSON.stringify(res.data.user))
           router.push({ name: "home" })
         } else {
           errorLogin.value = true

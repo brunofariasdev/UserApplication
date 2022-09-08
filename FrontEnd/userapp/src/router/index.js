@@ -9,6 +9,7 @@ const routes = [
     redirect: '/login'
   },
   {
+    name: 'login',
     path: '/login',
     component: Login,
   },

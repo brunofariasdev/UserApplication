@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import EmployeeService from '@/services/index'
+import router from '@/router'
 
 export default createStore({
   state: {
@@ -20,6 +21,9 @@ export default createStore({
     },
     CREATE_USER(state, payload) {
       state.userItems.push(payload)
+    },
+    SET_USER(state, payload) {
+      state.user = payload;
     }
   },
   actions: {
@@ -28,7 +32,10 @@ export default createStore({
         this.state.userItems = res.data;
       })
     },
-
+    Logoff() {
+      localStorage.clear()
+      router.push({ name: "login" })
+    },
     CreateUser({ commit }, user) {
       EmployeeService.CreateUser(user).then((res) => {
         console.log(res);

@@ -1,12 +1,20 @@
 <template>
     <CreatedModal v-if="modalCreate" @close="swithCreate" />
     <EditModal v-if="modalEdit" :user="userSelect" @close="swithEdit" />
-    <ModalConfirmed v-if="confirmeDelete" @close="swithConfirmed" @confirmed="deleteUser" />
+    <ModalConfirmed v-if="confirmeDelete" @close="swithConfirmed" @confirmed="deleteUser"
+        :text="'Tem certeza que deseja excluir esse Usuário'" />
+    <ModalConfirmed v-if="confirmeLogoff" @close="swithLogoff" @confirmed="Logoff" :text="'Deseja Sair'" />
     <div class="overflow-x-auto">
         <div
             class="min-w-screen min-h-screen bg-gray-100 flex items-center justify-center bg-gray-100 font-sans overflow-hidden">
             <div class="w-full lg:w-5/6">
-                <div class="bg-white shadow-md rounded my-6">
+                <div>
+                    <div class="flex justify-end w-full items-end mb-1">
+                        <button @click="swithLogoff"
+                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-white-700 rounded">
+                            Sair
+                        </button>
+                    </div>
                     <table class="min-w-max w-full table-auto">
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
@@ -30,6 +38,9 @@
                                 <td class="py-3 px-6 text-left">
                                     <div class="flex items-center">
                                         <span>{{ item.name }}</span>
+                                        <span v-if="item.id == LoggedUser.id"
+                                            class="ml-3 bg-red-500 rounded-sm text-white p-1">Seu
+                                            Usuário</span>
                                     </div>
                                 </td>
                                 <td class="py-3 px-6 text-center">
@@ -47,7 +58,8 @@
                                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </div>
-                                        <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110 cursor-pointer"
+                                        <div v-if="item.id != LoggedUser.id"
+                                            class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110 cursor-pointer"
                                             @click="setUserDelete(item.id)">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor">
@@ -67,7 +79,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import CreatedModal from '@/components/CreatedModal.vue'
 import EditModal from '@/components/EditModal.vue'
@@ -80,8 +92,10 @@ export default {
         const modalCreate = ref(false);
         const modalEdit = ref(false);
         const confirmeDelete = ref(false);
+        const confirmeLogoff = ref(false);
         const userSelect = ref();
         const deleteUserId = ref();
+        const LoggedUser = computed(() => JSON.parse(localStorage.getItem('user')));
 
         const start = () => {
             store.dispatch("GetUsers");
@@ -95,7 +109,6 @@ export default {
 
         const deleteUser = () => {
             store.dispatch('DeleteUser', deleteUserId.value)
-            console.log(deleteUserId)
             swithConfirmed();
         }
 
@@ -106,6 +119,11 @@ export default {
         const EditUser = (id) => {
             SelectUser(id);
             swithEdit()
+        }
+
+        const Logoff = () => {
+            swithLogoff()
+            store.dispatch('Logoff')
         }
 
         const swithEdit = () => {
@@ -120,7 +138,11 @@ export default {
             confirmeDelete.value = !confirmeDelete.value;
         }
 
-        return { store, swithCreate, swithConfirmed, EditUser, modalEdit, confirmeDelete, setUserDelete, deleteUser, modalCreate, userSelect, swithEdit };
+        const swithLogoff = () => {
+            confirmeLogoff.value = !confirmeLogoff.value;
+        }
+
+        return { confirmeLogoff, LoggedUser, store, swithLogoff, swithCreate, swithConfirmed, EditUser, modalEdit, confirmeDelete, setUserDelete, deleteUser, Logoff, modalCreate, userSelect, swithEdit };
     },
     components: { CreatedModal, EditModal, ModalConfirmed, ModalConfirmed }
 }
