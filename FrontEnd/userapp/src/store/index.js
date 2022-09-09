@@ -38,7 +38,6 @@ export default createStore({
     },
     CreateUser({ commit }, user) {
       EmployeeService.CreateUser(user).then((res) => {
-        console.log(res);
       })
     },
 
@@ -50,7 +49,6 @@ export default createStore({
 
     UpdateUser({ commit }, id) {
       EmployeeService.UpdateUser(id).then(() => {
-        console.log('atualizado');
       });
     }
   },

@@ -66,27 +66,27 @@
                     </div>
                     <div class="mb-2">
                         <label class="block text-white text-sm font-bold mb-2" for="username">
+                            CEP
+                        </label>
+                        <input
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="text" placeholder="CEP" v-mask="'#####-###'" v-model="user.cep">
+                    </div>
+                    <div class="mb-2">
+                        <label class="block text-white text-sm font-bold mb-2" for="username">
                             Cidade
                         </label>
                         <input
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             type="text" placeholder="Cidade" v-model="user.city">
                     </div>
-                    <div class="mb-2">
+                    <div>
                         <label class="block text-white text-sm font-bold mb-2" for="username">
                             Estado
                         </label>
                         <input
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             type="text" placeholder="Estado" v-model="user.state">
-                    </div>
-                    <div>
-                        <label class="block text-white text-sm font-bold mb-2" for="username">
-                            CEP
-                        </label>
-                        <input
-                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            type="text" placeholder="CEP" v-mask="'#####-###'" v-model="user.cep">
                     </div>
                 </div>
                 <!-- Modal footer -->
@@ -95,7 +95,8 @@
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Adicionar</button>
                     <button data-modal-toggle="defaultModal" type="button" @click="$emit('close')"
-                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancelar</button>
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                    Cancelar</button>
                 </div>
             </div>
         </div>
@@ -103,8 +104,9 @@
 </template>
 
 <script >
-import { ref } from 'vue'
-import { useStore } from 'vuex';
+import { ref, watch } from 'vue'
+import { useStore } from 'vuex'
+import CepService from '@/services/viacep'
 
 export default {
     setup(props, { emit }) {
@@ -120,13 +122,27 @@ export default {
             email: "",
         });
 
+        watch(() => {
+            if (user.value.cep.length == 9){
+                GetCep()
+            }
+        })
+
+        const GetCep = () => {
+            var cep = user.value.cep.replace("0-9")
+            CepService.GetInfos(cep).then((res) => {
+                user.value.city = res.data.localidade
+                user.value.state = res.data.uf
+            })
+        }
+
 
         const CreateUser = () => {
             store.dispatch('CreateUser', user.value);
             store.commit('CREATE_USER', user.value);
             emit('close')
         }
-        return { CreateUser, user, }
+        return { CreateUser, user, GetCep }
     }
 
 
